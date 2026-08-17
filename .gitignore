@@ -1,0 +1,13 @@
+# flatpak-builder outputs
+build-dir/
+.flatpak-builder/
+repo/
+*.flatpak
+
+# Agent files are local and are not shared.
+.claude/
+.mcp.json
+
+# Claude config dirs, if a session ever materialises one here.
+.claude-amber/
+.credentials.json

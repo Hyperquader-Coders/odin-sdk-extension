@@ -1,0 +1,77 @@
+# Build the extension and prove it can compile Odin. Slow by construction: it
+# compiles the Odin compiler from source against the llvm22 SDK extension.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      # The freedesktop SDK, the llvm22 extension and an LLVM-linked compiler
+      # build outgrow the runner's default free space. These three are the
+      # biggest things on it that nothing here needs.
+      - name: free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          df -h /
+
+      # elfutils supplies eu-strip. flatpak-builder splits debug symbols into a
+      # .Debug extension after each module builds, and without eu-strip that
+      # post-build step fails the run — after the module itself compiled fine,
+      # which makes it read like a build error.
+      - name: install flatpak-builder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            flatpak flatpak-builder elfutils
+
+      - name: add flathub
+        run: |
+          flatpak remote-add --if-not-exists --user \
+            flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+      # Reads the runtime, sdk and sdk-extensions out of the manifest, so the
+      # versions live in one place rather than being repeated here.
+      - name: install the sdk and llvm extension
+        run: |
+          flatpak-builder --user --install-deps-from=flathub --install-deps-only \
+            build-dir org.freedesktop.Sdk.Extension.odin.yaml
+
+      # rofiles-fuse needs /dev/fuse, which the runner does not reliably give us.
+      - name: build
+        run: |
+          flatpak-builder --user --disable-rofiles-fuse --force-clean \
+            --repo=repo build-dir org.freedesktop.Sdk.Extension.odin.yaml
+
+      # Install what was just built, so the check runs against the artifact
+      # rather than against the build tree.
+      - name: install from the local repo
+        run: |
+          flatpak remote-add --user --no-gpg-verify local-repo repo
+          flatpak install --user --noninteractive \
+            local-repo org.freedesktop.Sdk.Extension.odin//25.08
+          flatpak list --user --runtime | grep -i odin
+
+      # Compiles and runs a program that imports core:fmt. `odin version` alone
+      # would pass with a broken ODIN_ROOT, since it reads no collections.
+      - name: check
+        run: make check
+
+      - name: bundle
+        run: |
+          flatpak build-bundle --runtime repo odin-sdk-extension-x86_64.flatpak \
+            org.freedesktop.Sdk.Extension.odin 25.08
+          ls -lh odin-sdk-extension-x86_64.flatpak
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: odin-sdk-extension
+          path: odin-sdk-extension-x86_64.flatpak

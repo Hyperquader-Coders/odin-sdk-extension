@@ -1,0 +1,26 @@
+manifest: "App manifest" {
+  shape: page
+  decl: "sdk-extensions:\n- …Sdk.Extension.odin\n- …Sdk.Extension.llvm22"
+}
+
+sandbox: "flatpak-builder sandbox" {
+  sdk: "org.freedesktop.Sdk 25.08" {style.stroke-dash: 3}
+  odin: "/usr/lib/sdk/odin" {
+    bin: "odin · libLLVM.so.22.1\nflat: rpath \$ORIGIN"
+    root: "core/ base/ vendor/\nODIN_ROOT"
+    enable: "enable.sh" {shape: hexagon}
+  }
+  llvm: "/usr/lib/sdk/llvm22" {
+    clang: "clang\nthe link step's driver"
+  }
+}
+
+manifest.decl -> sandbox.odin: mounts {style.bold: true}
+manifest.decl -> sandbox.llvm: mounts
+
+sandbox.odin.enable -> sandbox.odin.root: "exports ODIN_ROOT"
+sandbox.odin.enable -> sandbox.llvm.clang: "puts clang on PATH —\nodin always links through it"
+
+build: "odin build\ninside the app's own build-commands" {style.fill: "#fff4e0"}
+sandbox.odin.bin -> build: compiles
+sandbox.llvm.clang -> build: links
