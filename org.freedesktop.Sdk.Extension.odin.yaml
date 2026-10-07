@@ -38,17 +38,6 @@ modules:
   - name: odin
     buildsystem: simple
     build-commands:
-      # Upstream commit 1dbafbab6 ("Explicitly specify all required LLVM
-      # components on linux build"), carried in unchanged by the rebase onto
-      # dev-2026-10, hardcodes `--libs ... arm aarch64 x86 webassembly riscv`
-      # for the Linux link step. That list predates and is not covered by this
-      # fork's --targets-built guard above, so linking fails outright with
-      # "llvm-config: unknown component name: aarch64" against llvm22, which
-      # provides X86, AMDGPU, ARM, NVPTX and WebAssembly but neither AArch64
-      # nor RISCV. Drop the two components llvm22 cannot resolve before
-      # building; the guard above still protects every per-target init call.
-      - sed -i 's/--libs core native passes arm aarch64 x86 webassembly riscv/--libs core native passes arm x86 webassembly/'
-        build_odin.sh
       - ./build_odin.sh release
       # Flat layout: build_odin.sh links with -Wl,-rpath=$ORIGIN, so libLLVM has
       # to sit beside the binary rather than in a lib/ directory.
@@ -84,7 +73,7 @@ modules:
       - type: git
         url: https://github.com/Hyperquader-Coders/Odin.git
         branch: llvm-target-guards-dev-2026-10
-        commit: 5afba05d8f0da99ac47041e04222e7232d1c58e7
+        commit: 0da33798e8ed3e58f8a2824b1f28a30921faa8a3
 
   - name: scripts
     buildsystem: simple
