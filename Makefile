@@ -11,7 +11,7 @@ BRANCH     ?= main
 REMOTE     ?= origin
 ROOT_COMMIT_MSG ?= Initial odin-sdk-extension
 
-.PHONY: deps build repo flatpak-repo verify check ci clean push force-push lint diags check-no-agent-files help
+.PHONY: deps build flatpak-repo flatpak-repo-path verify check ci clean push force-push lint diags check-no-agent-files help
 
 # targets: no test (no code of its own; `check` compiles and runs a program with the installed extension)
 
@@ -78,13 +78,13 @@ check: ## compile and run a real program with the installed extension
 # archive can pull from.
 REPO_DIR := build/repo
 
-flatpak-repo: ## print the path of the ostree repo 'make repo' built
+flatpak-repo-path: ## print the path of the ostree repo 'make flatpak-repo' built
 	@test -d $(REPO_DIR) || { \
-		echo "no repo at $(CURDIR)/$(REPO_DIR) — run 'make repo' first" >&2; \
+		echo "no repo at $(CURDIR)/$(REPO_DIR) — run 'make flatpak-repo' first" >&2; \
 		exit 2; }
 	@echo "$(CURDIR)/$(REPO_DIR)"
 
-repo: deps ## build the extension into an ostree repo under build/
+flatpak-repo: deps ## build the extension into an ostree repo under build/
 	@mkdir -p build
 	flatpak-builder --user --force-clean --disable-rofiles-fuse \
 		--state-dir=$(STATE_DIR) --repo=$(REPO_DIR) $(BUILD_DIR) $(MANIFEST)
