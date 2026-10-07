@@ -98,7 +98,8 @@ linked against.
 ## The compiler patch
 
 The compiler is built from [our Odin fork](https://github.com/Hyperquader-Coders/Odin),
-branch `llvm-target-guards`, pinned by commit. It carries one patch.
+branch `llvm-target-guards-dev-2026-10` (the same two patch commits, rebased onto
+each current Odin dev release in turn), pinned by commit. It carries one patch.
 
 Odin names each target's `LLVMInitialize*` symbols directly, and
 `src/llvm-c/Config/Targets.def` is vendored — it lists every LLVM target

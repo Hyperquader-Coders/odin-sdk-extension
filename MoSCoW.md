@@ -26,11 +26,12 @@ An empty band means that band is finished, not that it was never populated.
 
 ## Should have
 
-- **Land the Flathub submission.** The PR is open
-  ([flathub/flathub#9793](https://github.com/flathub/flathub/pull/9793)), built from the
-  pinned public fork; what remains is review — expect questions about the fork, answered by
-  the Must-have chain above. Once merged, every Odin application reaches the compiler with
-  one manifest line, without the amberlinux remote.
+- **Resubmit to Flathub.** The earlier PR
+  ([flathub/flathub#9793](https://github.com/flathub/flathub/pull/9793)) was closed, built
+  from the pinned public fork. Resubmit once the Must-have chain above lands upstream, so the
+  submission is no longer a conversation about why an SDK extension builds a language from
+  someone's fork. Once merged, every Odin application reaches the compiler with one manifest
+  line, without the amberlinux remote.
 
 ## Could have
 

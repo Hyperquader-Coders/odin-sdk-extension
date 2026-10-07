@@ -15,4 +15,7 @@
   </description>
   <url type="homepage">https://odin-lang.org/</url>
   <url type="vcs-browser">https://github.com/Hyperquader-Coders/odin-sdk-extension</url>
+  <releases>
+    <release version="2026.10" date="2026-10-06"/>
+  </releases>
 </component>
