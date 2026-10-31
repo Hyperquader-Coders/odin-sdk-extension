@@ -1,0 +1,13 @@
+# flatpak-builder's build tree, state and ostree repo in build/; bundles in
+# dist/; out/ only for what a program writes while it runs.
+/build/
+/dist/
+/out/
+
+# Agent files are local and are not shared.
+.claude/
+.mcp.json
+
+# Claude config dirs, if a session ever materialises one here.
+.claude-amber/
+.credentials.json
