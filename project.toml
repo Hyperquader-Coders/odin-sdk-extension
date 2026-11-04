@@ -1,0 +1,36 @@
+# What odin-sdk-extension is and needs from apt: build is flatpak and flatpak-builder, which
+# `check-manifest` and `check` run, test what only its own checks need. git, which only the two
+# Flatpak builds need, is the Makefile's deps-flatpak, with the SDK and the llvm extension.
+# house-rules docs/PROJECT_TOML.md has the layout.
+[project]
+schema = "amber-project-1"
+name = "odin-sdk-extension"
+license = "BSD-3-Clause"
+kind = "other"
+summary = "Flatpak SDK extension that puts the Odin compiler inside the build sandbox"
+tags = [
+  "ai-assisted",
+  "amber",
+  "amberlinux",
+  "flathub",
+  "flatpak",
+  "odin",
+  "sdk-extension",
+]
+steps = [
+  "init-modules",
+  "check-manifest",
+  "check",
+  "check-no-agent-files",
+]
+
+[build]
+packages = [
+  "flatpak",
+  "flatpak-builder",
+]
+
+[test]
+packages = [
+  "shellcheck",
+]
